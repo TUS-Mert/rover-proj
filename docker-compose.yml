@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: rover_db
+    restart: always
+    environment:
+      - POSTGRES_USER=mert
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=roverdb
+    ports:
+      - "5432:5432"
+    deploy:
+      resources:
+        limits:
+          [cite_start]memory: 256M  # Crucial for your 2GB RAM [cite: 242]
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data # Saves data to your USB
+
+  app:
+    build: .
+    container_name: rover_app
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://mert:password123@db:5432/roverdb
+    [cite_start]privileged: true # Required for GPIO access on Ubuntu [cite: 18, 246]
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"

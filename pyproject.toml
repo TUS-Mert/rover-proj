@@ -1,0 +1,17 @@
+[project]
+name = "rover-proj"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "eventlet>=0.40.4",
+    "flask>=3.1.2",
+    "flask-jwt-extended>=4.7.1",
+    "flask-socketio>=5.6.0",
+    "flask-sqlalchemy>=3.1.1",
+    "gpiozero>=2.0.1",
+    "psycopg2-binary>=2.9.11",
+    "python-dotenv>=1.2.1",
+    "smbus2>=0.6.0",
+]
