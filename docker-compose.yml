@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:16-alpine
@@ -8,13 +10,13 @@ services:
       - POSTGRES_PASSWORD=password123
       - POSTGRES_DB=roverdb
     ports:
-      - "5432:5432"
+      - "54320:5432"  # DBeaver uses 54320, App uses 5432
     deploy:
       resources:
         limits:
-          [cite_start]memory: 256M  # Crucial for your 2GB RAM [cite: 242]
+          memory: 256M
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data # Saves data to your USB
+      - rover_db_volume:/var/lib/postgresql/data
 
   app:
     build: .
@@ -23,8 +25,12 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://mert:password123@db:5432/roverdb
-    [cite_start]privileged: true # Required for GPIO access on Ubuntu [cite: 18, 246]
+    privileged: true
     volumes:
       - .:/app
+      - /app/.venv  # This "hides" the container's venv from your host folder
     ports:
       - "5000:5000"
+
+volumes:
+  rover_db_volume:
