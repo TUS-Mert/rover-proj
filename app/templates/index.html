@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <div class="card">
+        <h3>Live Stats</h3>
+        <div class="stats-row">
+            <div class="stat">
+                <span class="label">CPU Temp:</span>
+                <span id="cpu-temp">--</span>°C
+            </div>
+            <div class="stat">
+                <span class="label">Battery:</span>
+                <span id="battery">--</span>%
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Manual Control</h3>
+        <div class="control-pad">
+            <button class="btn" onclick="sendCommand('FORWARD')">▲</button>
+            <div class="side-btns">
+                <button class="btn" onclick="sendCommand('LEFT')">◀</button>
+                <button class="btn btn-stop" onclick="sendCommand('STOP')">■</button>
+                <button class="btn" onclick="sendCommand('RIGHT')">▶</button>
+            </div>
+            <button class="btn" onclick="sendCommand('BACKWARD')">▼</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
