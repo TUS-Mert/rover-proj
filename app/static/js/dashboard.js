@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const statusEl = document.getElementById('connection-status');
     let socket;
+    const dashboardGrid = document.querySelector('.dashboard-grid');
 
     const updateStatus = (isConnected, message = '') => {
         if (isConnected) {
@@ -45,17 +46,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     };
 
-    // Fetch JWT and then connect
-    try {
-        const response = await fetch('/token');
-        if (!response.ok) {
-            throw new Error(`Failed to fetch token: ${response.statusText}`);
-        }
-        const data = await response.json();
-        connectSocket(data.access_token);
-    } catch (error) {
-        console.error('Could not authenticate and connect to WebSocket.', error);
-        updateStatus(false, 'Auth failed');
+    // Read token from the data attribute on the page
+    const token = dashboardGrid.dataset.token;
+    if (token) {
+        connectSocket(token);
+    } else {
+        console.error('Authentication token not found on page.');
+        updateStatus(false, 'Auth token missing');
     }
 
     // Make sendCommand globally accessible

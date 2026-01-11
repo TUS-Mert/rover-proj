@@ -13,8 +13,14 @@
         <div class="container">
             <a href="/" class="logo">🚀 Rover Project</a>
             <ul class="nav-links">
-                <li><a href="/">Dashboard</a></li>
-                <li><a href="/logs">Logs</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="/">Dashboard</a></li>
+                    <li><a href="/logs">Logs</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                    <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>
@@ -27,6 +33,7 @@
         <p>&copy; 2024 Rover Project - Mert</p>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    {% block scripts %}
+    {% endblock %}
 </body>
 </html>

@@ -3,7 +3,7 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="dashboard-grid">
+<div class="dashboard-grid" data-token="{{ token }}">
     <div class="card status-card">
         <h3>System Status</h3>
         <div class="stats-row">
@@ -37,4 +37,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}
