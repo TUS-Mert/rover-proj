@@ -19,7 +19,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const connectSocket = (token) => {
         // Connect to the socket with the token
         socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port, {
-            query: { token }
+            extraHeaders: {
+                "Authorization": `Bearer ${token}`
+            }
         });
 
         socket.on('connect', () => {

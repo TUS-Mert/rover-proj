@@ -6,9 +6,13 @@ from . import socketio, motion
 
 @socketio.on('connect')
 def handle_connect():
-    token = request.args.get('token')
+    auth_header = request.headers.get('Authorization')
+    token = None
+    if auth_header and auth_header.startswith('Bearer '):
+        token = auth_header.split(' ')[1]
+
     if not token:
-        print("❌ Connection refused: No token provided.")
+        print("❌ Connection refused: No token provided in Authorization header.")
         return False
 
     try:
