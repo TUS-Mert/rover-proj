@@ -25,6 +25,8 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://mert:password123@db:5432/roverdb
+      - ENV=development # Use 'production' on the Pi
+      - JWT_SECRET_KEY=a-super-secret-key-that-is-long-and-secure
     privileged: true
     volumes:
       - .:/app

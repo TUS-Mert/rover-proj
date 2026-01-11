@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
+from flask_jwt_extended import JWTManager
 
 # Initialize the db object here so it can be imported by models
 db = SQLAlchemy()
@@ -15,19 +16,19 @@ def create_app():
     # Configuration
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default-dev-secret')
 
     # Bind extensions to this app
     db.init_app(app)
-    
-    # ADD THIS LINE:
-    socketio.init_app(app, cors_allowed_origins="*", async_mode='threading')
+    JWTManager(app)
+    socketio.init_app(app, cors_allowed_origins="*")
 
     with app.app_context():
         from . import models 
     
-    from .routes import main_bp
-    app.register_blueprint(main_bp)
+    # Import and register blueprints and socket events
+    from . import routes
+    from . import websocket
+    app.register_blueprint(routes.main_bp)
 
-    # AND IMPORT YOUR EVENTS SO THEY REGISTER
-    from . import websocket 
     return app

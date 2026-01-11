@@ -1,22 +1,21 @@
 from flask import Blueprint, render_template, jsonify
-from app.models import Telemetry # We'll use this to pull real data
+from flask_jwt_extended import create_access_token
 
-# Create a Blueprint named 'main'
 main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
+    """Render the main dashboard page."""
     return render_template('index.html')
 
-@main_bp.route('/api/telemetry')
-def get_telemetry():
-    # Pull the most recent entry from Postgres
-    latest = Telemetry.query.order_by(Telemetry.timestamp.desc()).first()
-    
-    if latest:
-        return jsonify({
-            "cpu_temp": round(latest.cpu_temp, 1),
-            "battery": int(latest.battery_level * 100)
-        })
-    
-    return jsonify({"cpu_temp": "N/A", "battery": "N/A"}), 404
+@main_bp.route('/token')
+def get_token():
+    """Generate a JWT for the client."""
+    # In a real app, you'd protect this and link it to a user session
+    access_token = create_access_token(identity='rover_ui')
+    return jsonify(access_token=access_token)
+
+@main_bp.route('/logs')
+def logs():
+    """Placeholder for a future logs page."""
+    return "Logs page coming soon.", 200

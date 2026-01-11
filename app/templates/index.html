@@ -4,6 +4,12 @@
 
 {% block content %}
 <div class="dashboard-grid">
+    <div class="card status-card">
+        <h3>System Status</h3>
+        <div class="stats-row">
+            <div class="stat">Connection: <span id="connection-status" class="status-disconnected">DISCONNECTED</span></div>
+        </div>
+    </div>
     <div class="card">
         <h3>Live Stats</h3>
         <div class="stats-row">
@@ -21,13 +27,13 @@
     <div class="card">
         <h3>Manual Control</h3>
         <div class="control-pad">
-            <button class="btn" onclick="sendCommand('FORWARD')">▲</button>
+            <button class="btn" onmousedown="sendCommand('forward')" onmouseup="sendCommand('stop')"><i class="fas fa-arrow-up"></i></button>
             <div class="side-btns">
-                <button class="btn" onclick="sendCommand('LEFT')">◀</button>
-                <button class="btn btn-stop" onclick="sendCommand('STOP')">■</button>
-                <button class="btn" onclick="sendCommand('RIGHT')">▶</button>
+                <button class="btn" onmousedown="sendCommand('left')" onmouseup="sendCommand('stop')"><i class="fas fa-arrow-left"></i></button>
+                <button class="btn btn-stop" onclick="sendCommand('stop')"><i class="fas fa-stop"></i></button>
+                <button class="btn" onmousedown="sendCommand('right')" onmouseup="sendCommand('stop')"><i class="fas fa-arrow-right"></i></button>
             </div>
-            <button class="btn" onclick="sendCommand('BACKWARD')">▼</button>
+            <button class="btn" onmousedown="sendCommand('backward')" onmouseup="sendCommand('stop')"><i class="fas fa-arrow-down"></i></button>
         </div>
     </div>
 </div>
