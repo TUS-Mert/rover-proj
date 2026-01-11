@@ -38,6 +38,7 @@ def create_app():
     # Import and register blueprints and socket events
     from . import routes
     from . import websocket
+    from . import streaming # Initialize camera and streaming components
     from .auth import auth_bp
     app.register_blueprint(routes.main_bp)
     app.register_blueprint(auth_bp)

@@ -4,6 +4,12 @@
 
 {% block content %}
 <div class="dashboard-grid" data-token="{{ token }}">
+    <div class="card video-feed-card">
+        <h3>Live Camera Feed</h3>
+        <div class="video-container">
+            <img src="{{ url_for('main.video_feed') }}" alt="Live camera feed">
+        </div>
+    </div>
     <div class="card status-card">
         <h3>System Status</h3>
         <div class="stats-row">

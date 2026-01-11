@@ -84,6 +84,25 @@ body {
     gap: 20px;
 }
 
+.video-feed-card {
+    /* Make the video card span across 2 columns on larger screens */
+    grid-column: span 2;
+    grid-row: span 2; /* Make it taller as well */
+}
+
+@media (max-width: 992px) {
+    .video-feed-card {
+        grid-column: span 1; /* Stack on smaller screens */
+        grid-row: span 1;
+    }
+}
+
+.video-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
 .card {
     background-color: var(--card-bg);
     border-radius: 8px;
