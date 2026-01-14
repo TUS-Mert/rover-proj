@@ -65,4 +65,86 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Cannot send command. Socket is not connected.');
         }
     };
+
+    // --- Control Logic ---
+
+    // --- Keyboard State & Mapping ---
+    let pressedKeys = []; // Tracks currently pressed movement keys
+    const keyActionMap = {
+        'ArrowUp': 'forward',
+        'ArrowDown': 'backward',
+        'ArrowLeft': 'left',
+        'ArrowRight': 'right'
+    };
+
+    // --- Mouse & Touch Controls ---
+    const controlButtons = {
+        'btn-forward': 'forward',
+        'btn-backward': 'backward',
+        'btn-left': 'left',
+        'btn-right': 'right',
+    };
+
+    // This helper prevents mouse/touch release from stopping the rover
+    // if a keyboard key is still held down.
+    const stopMovementOnRelease = () => {
+        if (pressedKeys.length === 0) {
+            sendCommand('stop');
+        }
+    };
+
+    for (const [buttonId, action] of Object.entries(controlButtons)) {
+        const button = document.getElementById(buttonId);
+        if (button) {
+            // Mouse events
+            button.addEventListener('mousedown', () => sendCommand(action));
+            button.addEventListener('mouseup', stopMovementOnRelease);
+            button.addEventListener('mouseleave', stopMovementOnRelease);
+
+            // Touch events for mobile
+            button.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevents firing mouse events as well
+                sendCommand(action);
+            });
+            button.addEventListener('touchend', stopMovementOnRelease);
+        }
+    }
+
+    // The dedicated stop button should always stop the rover and clear key state.
+    const stopButton = document.getElementById('btn-stop');
+    if (stopButton) {
+        stopButton.addEventListener('click', () => {
+            pressedKeys = [];
+            sendCommand('stop');
+        });
+    }
+
+    // --- Keyboard Event Listeners ---
+    document.addEventListener('keydown', (event) => {
+        const action = keyActionMap[event.key];
+        // Check if it's a mapped control key and not already pressed
+        if (action && !pressedKeys.includes(event.key)) {
+            event.preventDefault(); // Prevent browser scrolling
+            pressedKeys.unshift(event.key); // Add to the front as the most recent
+            sendCommand(action);
+        }
+    });
+
+    document.addEventListener('keyup', (event) => {
+        const action = keyActionMap[event.key];
+        if (action) {
+            event.preventDefault();
+            // Remove the released key from the array
+            pressedKeys = pressedKeys.filter(key => key !== event.key);
+
+            if (pressedKeys.length === 0) {
+                // If no more keys are down, stop the rover
+                sendCommand('stop');
+            } else {
+                // Otherwise, revert to the action of the last-pressed key
+                const lastAction = keyActionMap[pressedKeys[0]];
+                sendCommand(lastAction);
+            }
+        }
+    });
 });

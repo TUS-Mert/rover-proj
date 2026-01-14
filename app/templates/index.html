@@ -33,13 +33,13 @@
     <div class="card">
         <h3>Manual Control</h3>
         <div class="control-pad">
-            <button class="btn" onmousedown="sendCommand('forward')" onmouseup="sendCommand('stop')"><i class="fas fa-arrow-up"></i></button>
+            <button id="btn-forward" class="btn"><i class="fas fa-arrow-up"></i></button>
             <div class="side-btns">
-                <button class="btn" onmousedown="sendCommand('left')" onmouseup="sendCommand('stop')"><i class="fas fa-arrow-left"></i></button>
-                <button class="btn btn-stop" onclick="sendCommand('stop')"><i class="fas fa-stop"></i></button>
-                <button class="btn" onmousedown="sendCommand('right')" onmouseup="sendCommand('stop')"><i class="fas fa-arrow-right"></i></button>
+                <button id="btn-left" class="btn"><i class="fas fa-arrow-left"></i></button>
+                <button id="btn-stop" class="btn btn-stop"><i class="fas fa-stop"></i></button>
+                <button id="btn-right" class="btn"><i class="fas fa-arrow-right"></i></button>
             </div>
-            <button class="btn" onmousedown="sendCommand('backward')" onmouseup="sendCommand('stop')"><i class="fas fa-arrow-down"></i></button>
+            <button id="btn-backward" class="btn"><i class="fas fa-arrow-down"></i></button>
         </div>
     </div>
 </div>
