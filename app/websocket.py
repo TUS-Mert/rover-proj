@@ -1,8 +1,15 @@
 from flask import request
 from flask_socketio import emit
 from flask_jwt_extended import decode_token
+
 # Import your socketio instance and hardware modules
-from . import socketio, motion 
+from . import socketio, motion, db
+from .models import User, CommandLog
+
+# A simple in-memory store for session data.
+# NOTE: In a multi-worker production setup, a shared store like Redis or a
+# database would be necessary to map session IDs to users across processes.
+connected_users = {}
 
 @socketio.on('connect')
 def handle_connect():
@@ -17,7 +24,17 @@ def handle_connect():
 
     try:
         decoded_token = decode_token(token)
-        print(f"✅ Client connected with valid JWT. Identity: {decoded_token['sub']}")
+        user_email = decoded_token['sub']
+        user = User.query.filter_by(email=user_email).first()
+
+        if not user:
+            print(f"❌ Connection refused: User '{user_email}' not found in database.")
+            return False
+
+        # Store user ID against their session ID for logging purposes
+        connected_users[request.sid] = user.id
+        
+        print(f"✅ Client connected. SID: {request.sid}, User ID: {user.id}")
         emit('response', {'status': 'connected', 'message': 'Connection successful!'})
     except Exception as e:
         print(f"❌ Connection refused: Invalid Token. Reason: {e}")
@@ -25,11 +42,25 @@ def handle_connect():
 
 @socketio.on('command')
 def handle_command(json):
-    # This is now a protected event because the connection is authenticated
+    user_id = connected_users.get(request.sid)
+    if not user_id:
+        print(f"❌ Command rejected: No authenticated user for session {request.sid}")
+        return
+
     action = json.get('action') 
     value = json.get('value', 0)
     
-    print(f"Received command: {action}")
+    # Log the command to the database
+    log_entry = CommandLog(
+        command=action,
+        user_id=user_id,
+        is_executed=True, # Assuming immediate execution
+        executed_at=db.func.now()
+    )
+    db.session.add(log_entry)
+    db.session.commit()
+    
+    print(f"User {user_id} executed command: {action}")
     # Trigger the hardware
     motion.execute(action, value)
     
@@ -38,4 +69,8 @@ def handle_command(json):
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    print("Client disconnected")
+    user_id = connected_users.pop(request.sid, None)
+    if user_id:
+        print(f"Client disconnected. SID: {request.sid}, User ID: {user_id}")
+    else:
+        print(f"Client disconnected. SID: {request.sid} (user was not mapped).")
