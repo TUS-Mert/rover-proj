@@ -93,32 +93,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     };
 
-    for (const [buttonId, action] of Object.entries(controlButtons)) {
-        const button = document.getElementById(buttonId);
-        if (button) {
-            // Mouse events
-            button.addEventListener('mousedown', () => sendCommand(action));
-            button.addEventListener('mouseup', stopMovementOnRelease);
-            button.addEventListener('mouseleave', stopMovementOnRelease);
-
-            // Touch events for mobile
-            button.addEventListener('touchstart', (e) => {
-                e.preventDefault(); // Prevents firing mouse events as well
-                sendCommand(action);
-            });
-            button.addEventListener('touchend', stopMovementOnRelease);
-        }
-    }
-
-    // The dedicated stop button should always stop the rover and clear key state.
-    const stopButton = document.getElementById('btn-stop');
-    if (stopButton) {
-        stopButton.addEventListener('click', () => {
-            pressedKeys = [];
-            sendCommand('stop');
-        });
-    }
-
     // --- Keyboard Event Listeners ---
     document.addEventListener('keydown', (event) => {
         const action = keyActionMap[event.key];
