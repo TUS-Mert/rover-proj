@@ -17,4 +17,6 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "smbus2>=0.6.0",
     "opencv-python-headless>=4.9.0.80",
+    "pytest>=8.0.0",
+    "flake8>=7.0.0",
 ]
