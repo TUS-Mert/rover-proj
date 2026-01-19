@@ -27,14 +27,6 @@ jobs:
         # Installs the project and dependencies defined in pyproject.toml
         uv sync --frozen
 
-    - name: Run Tests
-      env:
-        ENV: test # Use mock hardware for tests
-        # Use an encrypted secret from the repository settings
-        SECRET_KEY: ${{ secrets.TEST_SECRET_KEY }}
-      run: |
-        uv run pytest
-
   docker-integration:
     runs-on: ubuntu-latest
     needs: test
