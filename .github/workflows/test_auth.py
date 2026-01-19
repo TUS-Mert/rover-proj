@@ -1,4 +1,3 @@
-from tests.test_app import client  # noqa: F401, import the client fixture
 from app.models import User
 from app import db, bcrypt
 
