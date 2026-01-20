@@ -27,6 +27,8 @@ jobs:
 
       - name: Lint with ruff
         run: uv run ruff check .
-
+      
       - name: Run Tests
+        env:
+          PYTHONPATH: .
         run: uv run pytest
