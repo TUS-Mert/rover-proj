@@ -1,52 +1,32 @@
-name: Rover CI Pipeline
+name: Continuous Integration
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [main]
+  push:
+    branches: [main]
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@v5
-      with:
-        enable-cache: true
-
-    - name: Set up Python 3.12
-      run: uv python install 3.12
-
-    - name: Install dependencies
-      run: |
-        uv venv
-        # Installs the project and dependencies defined in pyproject.toml
-        uv pip install .
-
-    - name: Lint with flake8
-      run: |
-        # The .flake8 config file is picked up automatically
-        uv run flake8 .
-
-    - name: Run Tests
-      env:
-        ENV: test # Use mock hardware for tests
-        # Use an encrypted secret from the repository settings
-        SECRET_KEY: ${{ secrets.TEST_SECRET_KEY }}
-      run: |
-        uv run pytest
-
-  docker-integration:
-    runs-on: ubuntu-latest
-    needs: test
+    runs-on: ubuntu-24.04  # Matching your Pi 5 Server version
+    
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Build and Run Tests in Docker
-        # Builds the stack and runs pytest inside the 'app' container
-        # We override ENV to 'test' to ensure mock hardware is used
-        run: docker compose run --rm -e ENV=test app pytest
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Lint with ruff
+        run: uv run ruff check .
+
+      - name: Run Tests
+        run: uv run pytest
