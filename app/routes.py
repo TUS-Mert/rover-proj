@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, Response
+from flask import Blueprint, render_template, Response
 from flask_jwt_extended import create_access_token
 from flask_login import login_required, current_user
 from . import streaming

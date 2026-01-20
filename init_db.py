@@ -1,6 +1,5 @@
 import sys
 from app import create_app, db
-import app.models  # This ensures all models are registered with SQLAlchemy
 
 def initialize_database():
     """Drops existing tables and creates new ones based on the models."""

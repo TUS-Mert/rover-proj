@@ -7,6 +7,8 @@ from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 
+from . import models  # Import models to register them with SQLAlchemy
+
 # Initialize the db object here so it can be imported by models
 db = SQLAlchemy()
 socketio = SocketIO(manage_session=False)
@@ -32,9 +34,9 @@ def create_app():
     login_manager.login_view = 'auth.login' # Redirect to login page
 
     # Import and register blueprints and socket events
-    from . import routes
-    from . import websocket
-    from . import streaming # Initialize camera and streaming components
+    from . import routes as routes 
+    from . import websocket as websocket
+    from . import streaming as streaming # Initialize camera and streaming components
     from .auth import auth_bp
     app.register_blueprint(routes.main_bp)
     app.register_blueprint(auth_bp)

@@ -1,3 +1,3 @@
-from .user import User
-from .telemetry import Telemetry
-from .logs import CommandLog
+from .user import User as User
+from .telemetry import Telemetry as Telemetry
+from .logs import CommandLog as CommandLog
