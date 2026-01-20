@@ -7,9 +7,7 @@ from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 
-from . import models  # Import models to register them with SQLAlchemy
-
-# Initialize the db object here so it can be imported by models
+# 1. Define extensions FIRST (Global Scope)
 db = SQLAlchemy()
 socketio = SocketIO(manage_session=False)
 bcrypt = Bcrypt()
@@ -31,18 +29,27 @@ def create_app():
     JWTManager(app)
     socketio.init_app(app, cors_allowed_origins="*")
     login_manager.init_app(app)
-    login_manager.login_view = 'auth.login' # Redirect to login page
+    login_manager.login_view = 'auth.login'
 
-    # Import and register blueprints and socket events
-    from . import routes as routes 
+    # 2. Import models INSIDE the function
+    # This breaks the circular dependency because 'db' is already defined above
+    with app.app_context():
+        from . import models
+
+    # Import and register blueprints
+    # Note: Rename imports to avoid shadowing if necessary, but this is fine
+    from . import routes
     from . import websocket as websocket
-    from . import streaming as streaming # Initialize camera and streaming components
+    from . import streaming as streaming
     from .auth import auth_bp
+    
     app.register_blueprint(routes.main_bp)
     app.register_blueprint(auth_bp)
 
     @login_manager.user_loader
     def load_user(user_id):
+        # We need to make sure we access the User model correctly
+        # Since we imported 'models' inside this function, it is available here
         return models.User.query.get(int(user_id))
 
     return app
