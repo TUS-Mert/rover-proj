@@ -9,15 +9,15 @@ def test_user_login_and_access(client):
     THEN check that the login is successful and they can access the root page
     """
     # 1. Create a test user directly in the in-memory database
-    password_hash = bcrypt.generate_password_hash("testpassword").decode("utf-8")
-    new_user = User(username="testuser", password=password_hash)
+    hashed_password = bcrypt.generate_password_hash("testpassword").decode("utf-8")
+    new_user = User(email="test@example.com", password_hash=hashed_password)
     with client.application.app_context():
         db.session.add(new_user)
         db.session.commit()
 
     # 2. Simulate a user logging in with a form POST request
     response = client.post('/login', data=dict(
-        username='testuser',
+        email='test@example.com',
         password='testpassword'
     ), follow_redirects=True)
 

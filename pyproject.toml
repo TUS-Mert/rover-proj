@@ -19,4 +19,5 @@ dependencies = [
     "opencv-python-headless>=4.9.0.80",
     "pytest>=8.0.0",
     "flake8>=7.0.0",
+    "ruff>=0.14.13",
 ]

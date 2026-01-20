@@ -31,10 +31,6 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login' # Redirect to login page
 
-    with app.app_context():
-        from . import models 
-        db.create_all() # Create tables if they don't exist
-    
     # Import and register blueprints and socket events
     from . import routes
     from . import websocket
