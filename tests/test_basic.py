@@ -8,7 +8,6 @@ def app():
     app = create_app()
     app.config.update({
         "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:", # Isolated DB
         "WTF_CSRF_ENABLED": False, # Disable CSRF tokens for easier testing
     })
 

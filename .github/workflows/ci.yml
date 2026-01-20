@@ -31,4 +31,10 @@ jobs:
       - name: Run Tests
         env:
           PYTHONPATH: .
+          # 1. Provide a dummy URL for the factory to start up
+          # We use SQLite memory so it's fast and doesn't need a real Postgres
+          DATABASE_URL: "sqlite:///:memory:"
+          # 2. Provide other required keys to prevent startup crashes
+          JWT_SECRET_KEY: "ci-test-key"
+          SECRET_KEY: "ci-secret-key"
         run: uv run pytest

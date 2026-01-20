@@ -21,3 +21,8 @@ dependencies = [
     "flake8>=7.0.0",
     "ruff>=0.14.13",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest-env>=1.2.0",
+]
