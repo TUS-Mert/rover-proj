@@ -15,5 +15,7 @@ RUN uv sync --frozen
 # Copy the rest of the code
 COPY . .
 
+CMD ["uv", "run", "init_db.py"]
+
 # Run the app
 CMD ["uv", "run", "flask", "run", "--host=0.0.0.0"]
