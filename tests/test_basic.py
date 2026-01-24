@@ -15,3 +15,6 @@ def test_telemetry_api(client, auth):
     auth.login()
     response = client.get('/api/telemetry')
     assert response.status_code in [200, 404]
+
+
+    #TODO: Add testing for database initialization script (init_db.py)

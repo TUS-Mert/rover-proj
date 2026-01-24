@@ -77,9 +77,5 @@ jobs:
 
       - name: Deploy to Docker Compose
         run: |
-          # Pull the fresh ARM64 image
-          docker compose pull app
-          # Restart the app service without dropping the DB volume
-          docker compose up -d --force-recreate app
-          # Clean up old images to save SD card space on the Pi
+          docker compose up -d --build --force-recreate app
           docker image prune -f
