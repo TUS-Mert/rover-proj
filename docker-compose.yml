@@ -19,6 +19,8 @@ services:
       - rover_db_volume:/var/lib/postgresql/data
 
   app:
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
     build: .
     container_name: rover_app
     depends_on:
