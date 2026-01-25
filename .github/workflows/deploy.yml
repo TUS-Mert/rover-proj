@@ -77,5 +77,5 @@ jobs:
 
       - name: Deploy to Docker Compose
         run: |
-          docker compose up -d --build --force-recreate app
+          docker compose up -d --build
           docker image prune -f
