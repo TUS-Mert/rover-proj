@@ -1,0 +1,119 @@
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 20px;
+    align-items: start;
+}
+
+.controls-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+@media (max-width: 992px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.video-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.card h3 {
+    margin-top: 0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: space-around;
+    font-size: 1.1rem;
+}
+
+.stat .label {
+    color: var(--secondary-text);
+}
+
+/* Status Indicator */
+#connection-status {
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+.status-connected {
+    color: white;
+    background-color: var(--status-ok);
+}
+.status-disconnected {
+    color: white;
+    background-color: var(--status-bad);
+}
+
+
+/* Control Pad */
+.control-pad {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 10px;
+    justify-items: center;
+    align-items: center;
+    max-width: 250px;
+    margin: auto;
+}
+
+.control-pad .btn {
+    grid-column: 2 / 3;
+}
+
+.control-pad .side-btns {
+    grid-column: 1 / 4;
+    grid-row: 2 / 3;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    width: 70px;
+    height: 70px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-stop {
+    background-color: var(--stop-color);
+}
+
+.btn-stop:hover {
+    background-color: var(--stop-hover);
+}
