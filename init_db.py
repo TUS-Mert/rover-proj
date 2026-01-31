@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 
 from app import create_app, db
 
-def initialize_database(drop_all):
+def initialize_database(drop_all: bool = False):
     """Drops existing tables and creates new ones based on the models."""
     app = create_app()
     

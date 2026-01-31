@@ -6,38 +6,43 @@ from flask_socketio import SocketIO
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate
 
 # 1. Define extensions FIRST (Global Scope)
 db = SQLAlchemy()
 socketio = SocketIO(manage_session=False)
 bcrypt = Bcrypt()
 login_manager = LoginManager()
+migrate = Migrate()
 
 def create_app():
     load_dotenv()
     app = Flask(__name__)
-    
+
+    db_admin_user = os.getenv('POSTGRES_USER')
+    db_admin_password = os.getenv('POSTGRES_PASSWORD')
+    db_name = os.getenv('POSTGRES_DB')
+    db_port = os.getenv('POSTGRES_PORT')
+    db_url = f"postgresql://{db_admin_user}:{db_admin_password}@db:{db_port}/{db_name}"
+
     # Configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default-dev-secret')
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'a-default-session-secret-key')
 
     # Bind extensions to this app
     db.init_app(app)
+    migrate.init_app(app, db)
     bcrypt.init_app(app)
     JWTManager(app)
     socketio.init_app(app, cors_allowed_origins="*")
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
 
-    # 2. Import models INSIDE the function
-    # This breaks the circular dependency because 'db' is already defined above
     with app.app_context():
         from . import models
 
-    # Import and register blueprints
-    # Note: Rename imports to avoid shadowing if necessary, but this is fine
     from . import routes
     from . import websocket as websocket
     from . import streaming as streaming

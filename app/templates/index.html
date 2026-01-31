@@ -2,6 +2,10 @@
 
 {% block title %}Dashboard{% endblock %}
 
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-grid" data-token="{{ token }}">
     <div class="card video-feed-card">
@@ -10,38 +14,40 @@
             <img src="{{ url_for('main.video_feed') }}" alt="Live camera feed">
         </div>
     </div>
-    <div class="card status-card">
-        <h3>System Status</h3>
-        <div class="stats-row">
-            <div class="stat">Connection: <span id="connection-status" class="status-disconnected">DISCONNECTED</span></div>
-        </div>
-    </div>
-    <div class="card">
-        <h3>Live Stats</h3>
-        <div class="stats-row">
-            <div class="stat">
-                <span class="label">CPU Temp:</span>
-                <span id="cpu-temp">--</span>°C
-            </div>
-            <div class="stat">
-                <span class="label">Battery:</span>
-                <span id="battery">--</span>%
+    <div class="controls-column">
+        <div class="card status-card">
+            <h3>System Status</h3>
+            <div class="stats-row">
+                <div class="stat">Connection: <span id="connection-status" class="status-disconnected">DISCONNECTED</span></div>
             </div>
         </div>
-    </div>
+        <div class="card">
+            <h3>Live Stats</h3>
+            <div class="stats-row">
+                <div class="stat">
+                    <span class="label">CPU Temp:</span>
+                    <span id="cpu-temp">--</span>°C
+                </div>
+                <div class="stat">
+                    <span class="label">Battery:</span>
+                    <span id="battery">--</span>%
+                </div>
+            </div>
+        </div>
 
-    <div class="card">
-        <h3>Manual Control</h3>
-        <div class="control-pad">
-            <button id="btn-forward" class="btn"><i class="fas fa-arrow-up"></i></button>
-            <div class="side-btns">
-                <button id="btn-left" class="btn"><i class="fas fa-arrow-left"></i></button>
-                <button id="btn-stop" class="btn btn-stop" disabled style="background-color: darkblue; cursor: not-allowed;"><i class="fas fa-stop"></i></button>
-                <button id="btn-right" class="btn"><i class="fas fa-arrow-right"></i></button>
+        <div class="card">
+            <h3>Manual Control</h3>
+            <div class="control-pad">
+                <button id="btn-forward" class="btn"><i class="fas fa-arrow-up"></i></button>
+                <div class="side-btns">
+                    <button id="btn-left" class="btn"><i class="fas fa-arrow-left"></i></button>
+                    <button id="btn-stop" class="btn btn-stop" disabled style="background-color: darkblue; cursor: not-allowed;"><i class="fas fa-stop"></i></button>
+                    <button id="btn-right" class="btn"><i class="fas fa-arrow-right"></i></button>
+                </div>
+                <button id="btn-backward" class="btn"><i class="fas fa-arrow-down"></i></button>
             </div>
-            <button id="btn-backward" class="btn"><i class="fas fa-arrow-down"></i></button>
         </div>
-    </div>
+    </div> 
 </div>
 {% endblock %}
 
