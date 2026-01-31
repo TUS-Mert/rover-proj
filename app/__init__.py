@@ -16,9 +16,15 @@ login_manager = LoginManager()
 def create_app():
     load_dotenv()
     app = Flask(__name__)
-    
+
+    db_admin_user = os.getenv('POSTGRES_USER')
+    db_admin_password = os.getenv('POSTGRES_PASSWORD')
+    db_name = os.getenv('POSTGRES_DB')
+    db_port = os.getenv('POSTGRES_PORT')
+    db_url = f"postgresql://{db_admin_user}:{db_admin_password}@db:{db_port}/{db_name}"
+
     # Configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default-dev-secret')
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'a-default-session-secret-key')

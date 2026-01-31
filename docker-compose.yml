@@ -1,14 +1,12 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16-alpine
     container_name: rover_db
     restart: always
     environment:
-      - POSTGRES_USER=mert
-      - POSTGRES_PASSWORD=password123
-      - POSTGRES_DB=roverdb
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "54320:5432"
     deploy:
@@ -17,23 +15,32 @@ services:
           memory: 256M
     volumes:
       - rover_db_volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
     container_name: rover_app
+    restart: always
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - PYTHONDONTWRITEBYTECODE=1
-      - DATABASE_URL=postgresql://mert:password123@db:5432/roverdb
-      - JWT_SECRET_KEY=a-super-secret-key-that-is-long-and-secure
-      - SECRET_KEY=another-super-secret-key-for-flask-sessions
-    privileged: true
+      # Pass the secrets from .env
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - SECRET_KEY=${FLASK_SECRET_KEY}
+      # Pass DB info so the App can connect (Critical!)
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - CLOUDFLARED_TOKEN=${CLOUDFLARED_TOKEN}
     ports:
-      - "5000:5000"  # Optional: You can remove this if you ONLY want access via Tunnel
-    # Note: Volumes for code are removed for production stability
+      - "5000:5000"
+    env_file:
+      - .env
 
-  # --- NEW SERVICE ---
   tunnel:
     image: cloudflare/cloudflared:latest
     container_name: rover_tunnel
