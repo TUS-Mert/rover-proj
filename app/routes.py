@@ -10,7 +10,7 @@ main_bp = Blueprint('main', __name__)
 def index():
     """Render the main dashboard page."""
     if not current_user.can_read:
-        return render_template('unauthorized.html'), 403
+        return render_template('auth/unauthorized.html'), 403
     # Generate token for the logged-in user and pass it to the template
     access_token = create_access_token(identity=current_user.email)
     return render_template('index.html', token=access_token)

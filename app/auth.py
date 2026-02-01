@@ -18,7 +18,7 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
 
-    return render_template('login.html')
+    return render_template('auth/login.html')
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -45,7 +45,7 @@ def register():
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('auth.login'))
 
-    return render_template('register.html')
+    return render_template('auth/register.html')
 
 @auth_bp.route('/logout')
 @login_required
