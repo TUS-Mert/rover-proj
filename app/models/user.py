@@ -17,7 +17,7 @@ class User(UserMixin, db.Model):
     last_name = db.Column(db.String(50), nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.now())
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    privilege = db.Column(db.Enum(UserPrivilege), default=UserPrivilege.READ, nullable=False)
+    privilege = db.Column(db.Enum(UserPrivilege), default=None, nullable=True)
 
     def __repr__(self):
         return f'<User {self.email}>'

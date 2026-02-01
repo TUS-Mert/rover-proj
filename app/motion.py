@@ -8,10 +8,8 @@ if IS_PROD:
     from gpiozero.pins.lgpio import LPiFactory
     factory = LPiFactory()
 else:
-    # --- FIX START ---
     from gpiozero.pins.mock import MockFactory, MockPWMPin
     factory = MockFactory(pin_class=MockPWMPin) 
-    # --- FIX END ---
     print("Running with Mock Hardware (PWM Supported)")
 
 class MotionController:
