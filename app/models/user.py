@@ -19,5 +19,17 @@ class User(UserMixin, db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     privilege = db.Column(db.Enum(UserPrivilege), default=None, nullable=True)
 
+    @property
+    def can_read(self):
+        return self.privilege in (UserPrivilege.READ, UserPrivilege.WRITE, UserPrivilege.ADMIN)
+
+    @property
+    def can_write(self):
+        return self.privilege in (UserPrivilege.WRITE, UserPrivilege.ADMIN)
+
+    @property
+    def is_admin(self):
+        return self.privilege == UserPrivilege.ADMIN
+
     def __repr__(self):
         return f'<User {self.email}>'

@@ -31,6 +31,10 @@ def handle_connect():
             print(f"❌ Connection refused: User '{user_email}' not found in database.")
             return False
 
+        if not user.can_read:
+            print(f"❌ Connection refused: User '{user_email}' has no privileges.")
+            return False
+
         # Store user ID against their session ID for logging purposes
         connected_users[request.sid] = user.id
         
@@ -45,6 +49,13 @@ def handle_command(json):
     user_id = connected_users.get(request.sid)
     if not user_id:
         print(f"❌ Command rejected: No authenticated user for session {request.sid}")
+        return
+
+    # Check for write privileges
+    user = User.query.get(user_id)
+    if not user or not user.can_write:
+        print(f"❌ Command rejected: User {user_id} does not have write permission.")
+        emit('response', {'status': 'error', 'message': 'Insufficient permissions'})
         return
 
     action = json.get('action') 

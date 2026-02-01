@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Unauthorized Access{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/unauthorized.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="unauthorized-container">
+    <h1>Unauthorized Access</h1>
+    <p>You do not have permission to access this page.</p>
+    <p></p>Please contact administrators for access.</p>
+</div>
+{% endblock %}

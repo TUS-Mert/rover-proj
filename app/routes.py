@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, Response
+from flask import Blueprint, render_template, Response, flash, redirect, url_for, abort
 from flask_jwt_extended import create_access_token
 from flask_login import login_required, current_user
 from . import streaming
@@ -9,6 +9,8 @@ main_bp = Blueprint('main', __name__)
 @login_required
 def index():
     """Render the main dashboard page."""
+    if not current_user.can_read:
+        return render_template('unauthorized.html'), 403
     # Generate token for the logged-in user and pass it to the template
     access_token = create_access_token(identity=current_user.email)
     return render_template('index.html', token=access_token)
@@ -17,6 +19,8 @@ def index():
 @login_required
 def video_feed():
     """Video streaming route."""
+    if not current_user.can_read:
+        abort(403)
     return Response(streaming.generate_frames(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
