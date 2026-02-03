@@ -1,0 +1,90 @@
+/* Center everything on the page */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    background-color: #f4f6f9; /* Light grey background */
+}
+
+/* The white box holding the form */
+.auth-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px; /* Keeps it from getting too wide */
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* Form Inputs */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+/* Error styling */
+.is-invalid {
+    border-color: #e74c3c;
+}
+
+.invalid-feedback {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+/* Buttons */
+.btn-block {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.btn-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    color: #7f8c8d;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    color: #2c3e50;
+}

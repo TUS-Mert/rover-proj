@@ -7,6 +7,7 @@ from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
+from flask_wtf import CSRFProtect
 
 # 1. Define extensions FIRST (Global Scope)
 db = SQLAlchemy()
@@ -14,6 +15,7 @@ socketio = SocketIO(manage_session=False)
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 migrate = Migrate()
+csrf = CSRFProtect()
 
 def create_app():
     load_dotenv()

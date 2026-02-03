@@ -1,6 +1,9 @@
-from flask import Blueprint, render_template, Response, flash, redirect, url_for, abort
+from flask import Blueprint, render_template, Response, abort, redirect, url_for, flash, request
 from flask_jwt_extended import create_access_token
 from flask_login import login_required, current_user
+
+from app import db
+from app.models import User, UserPrivilege
 from . import streaming
 
 main_bp = Blueprint('main', __name__)
@@ -30,3 +33,49 @@ def video_feed():
 def logs():
     """Placeholder for a future logs page."""
     return "Logs page coming soon.", 200
+
+@main_bp.route('/grant_privilege')
+@login_required
+def grant_privilege():
+    # 1. Security Check: Only Admins allowed
+    if not current_user.is_admin:
+        abort(403)
+    
+    # 2. Fetch all users (ordered by ID)
+    users = User.query.order_by(User.id).all()
+    
+    # 3. Render template with data
+    return render_template(
+        'auth/privilege_granting.html', 
+        users=users, 
+        UserPrivilege=UserPrivilege
+    )
+
+@main_bp.route('/update_user_role/<int:user_id>', methods=['POST'])
+@login_required
+def update_user_role(user_id):
+    # Security Check
+    if not current_user.is_admin:
+        abort(403)
+        
+    user = User.query.get_or_404(user_id)
+    new_role_name = request.form.get('privilege')
+    
+    # Prevent Admin from locking themselves out
+    if user.id == current_user.id and new_role_name != 'ADMIN':
+        flash('You cannot remove your own Admin privileges!', 'danger')
+        return redirect(url_for('main.grant_privilege'))
+
+    try:
+        if new_role_name in UserPrivilege.__members__:
+            user.privilege = UserPrivilege[new_role_name]
+            db.session.commit()
+            flash(f"Updated {user.email} to {new_role_name}", 'success')
+        else:
+            flash("Invalid role selected.", 'warning')
+            
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error updating user: {str(e)}", 'danger')
+
+    return redirect(url_for('main.grant_privilege'))

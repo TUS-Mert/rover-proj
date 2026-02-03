@@ -7,6 +7,7 @@ class UserPrivilege(Enum):
     READ = 'Read'
     WRITE = 'Write'
     ADMIN = 'Admin'
+    NULL = None
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
