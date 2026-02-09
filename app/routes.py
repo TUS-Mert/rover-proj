@@ -1,12 +1,33 @@
-from flask import Blueprint, render_template, Response, abort, redirect, url_for, flash, request
+import threading
+from flask import Blueprint, render_template, Response, abort, redirect, url_for, flash, request, jsonify
 from flask_jwt_extended import create_access_token
 from flask_login import login_required, current_user
 
-from app import db
+from app import db, socketio
 from app.models import User, UserPrivilege
 from . import streaming
+from .sensors import sensor_manager
 
 main_bp = Blueprint('main', __name__)
+
+# Background thread for BME280
+thread = None
+thread_lock = threading.Lock()
+
+def background_sensor_thread():
+    """Sends sensor data to clients every 2 seconds."""
+    ticks = 0
+    while True:
+        socketio.sleep(2)
+        data = sensor_manager.get_readings()
+        if data:
+            socketio.emit('bme_data', data)
+            
+            # Log data to DB every minute (30 * 2s = 60s)
+            ticks += 1
+            if ticks >= 30:
+                sensor_manager.log_data(data)
+                ticks = 0
 
 @main_bp.route('/')
 @login_required
@@ -14,6 +35,13 @@ def index():
     """Render the main dashboard page."""
     if not current_user.can_read:
         return render_template('auth/unauthorized.html'), 403
+    
+    # Start the background thread if it's not running
+    global thread
+    with thread_lock:
+        if thread is None:
+            thread = socketio.start_background_task(background_sensor_thread)
+
     # Generate token for the logged-in user and pass it to the template
     access_token = create_access_token(identity=current_user.email)
     return render_template('index.html', token=access_token)
@@ -26,6 +54,15 @@ def video_feed():
         abort(403)
     return Response(streaming.generate_frames(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@main_bp.route('/api/sensors')
+@login_required
+def get_sensor_data():
+    """API endpoint to fetch current sensor data."""
+    data = sensor_manager.get_readings()
+    if data:
+        return jsonify(data)
+    return jsonify({'error': 'Sensor read failed'}), 500
 
 # The /token route is no longer needed as it's generated on dashboard load
 @main_bp.route('/logs')

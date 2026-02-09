@@ -22,6 +22,7 @@ dependencies = [
     "ruff>=0.14.13",
     "flask-migrate>=4.1.0",
     "flask-wtf>=1.2.2",
+    "bme280>=0.7",
 ]
 
 [dependency-groups]

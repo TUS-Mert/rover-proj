@@ -46,6 +46,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('cpu-temp').textContent = data.cpu_temp.toFixed(1);
             document.getElementById('battery').textContent = data.battery.toFixed(0);
         });
+
+        // Listen for BME280 sensor data
+        socket.on('bme_data', (data) => {
+            const tempEl = document.getElementById('bme-temp');
+            const humEl = document.getElementById('bme-humidity');
+            const pressEl = document.getElementById('bme-pressure');
+
+            if (tempEl) tempEl.textContent = data.temperature;
+            if (humEl) humEl.textContent = data.humidity;
+            if (pressEl) pressEl.textContent = data.pressure;
+        });
     };
 
     // Read token from the data attribute on the page
