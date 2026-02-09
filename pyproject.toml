@@ -23,6 +23,7 @@ dependencies = [
     "flask-migrate>=4.1.0",
     "flask-wtf>=1.2.2",
     "bme280>=0.7",
+    "lgpio>=0.2.2.0",
 ]
 
 [dependency-groups]
