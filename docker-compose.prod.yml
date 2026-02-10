@@ -1,0 +1,12 @@
+# docker-compose.prod.yml
+services:
+  app:
+    # 1. Enable Hardware Access (Crucial for GPIO & Camera)
+    privileged: true
+    
+    # 2. Set Environment to Production
+    environment:
+      - ENV=production
+    
+    # 3. (Optional) Remove volume mapping if you copy code into the image
+    # volumes: []
