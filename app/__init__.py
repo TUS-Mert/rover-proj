@@ -17,21 +17,22 @@ login_manager = LoginManager()
 migrate = Migrate()
 csrf = CSRFProtect()
 
+
 def create_app():
     load_dotenv()
     app = Flask(__name__)
 
-    db_admin_user = os.getenv('POSTGRES_USER')
-    db_admin_password = os.getenv('POSTGRES_PASSWORD')
-    db_name = os.getenv('POSTGRES_DB')
-    db_port = os.getenv('POSTGRES_PORT')
+    db_admin_user = os.getenv("POSTGRES_USER")
+    db_admin_password = os.getenv("POSTGRES_PASSWORD")
+    db_name = os.getenv("POSTGRES_DB")
+    db_port = os.getenv("POSTGRES_PORT")
     db_url = f"postgresql://{db_admin_user}:{db_admin_password}@db:{db_port}/{db_name}"
 
     # Configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default-dev-secret')
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'a-default-session-secret-key')
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "default-dev-secret")
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "a-default-session-secret-key")
 
     # Bind extensions to this app
     db.init_app(app)
@@ -40,7 +41,7 @@ def create_app():
     JWTManager(app)
     socketio.init_app(app, cors_allowed_origins="*")
     login_manager.init_app(app)
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = "auth.login"
 
     with app.app_context():
         from . import models
@@ -49,7 +50,7 @@ def create_app():
     from . import websocket as websocket
     from . import streaming as streaming
     from .auth import auth_bp
-    
+
     app.register_blueprint(routes.main_bp)
     app.register_blueprint(auth_bp)
 

@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          clean: false
+          clean: env
       
       - name: Install Docker (if missing)
         run: |

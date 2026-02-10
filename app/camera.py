@@ -14,9 +14,12 @@ except ImportError:
 # - cv2 is missing (CI environment)
 # - SIMULATE_HARDWARE env var is set
 # - FLASK_ENV is set to 'testing'
-SIMULATE = (cv2 is None) or \
-           (os.getenv('SIMULATE_HARDWARE') == 'true') or \
-           (os.getenv('FLASK_ENV') == 'testing')
+SIMULATE = (
+    (cv2 is None)
+    or (os.getenv("SIMULATE_HARDWARE") == "true")
+    or (os.getenv("FLASK_ENV") == "testing")
+)
+
 
 class Camera:
     def __init__(self):
@@ -65,10 +68,10 @@ class Camera:
             # --- PATH A: SIMULATION / NO HARDWARE ---
             if SIMULATE or self.video is None:
                 # In testing/CI, we sleep longer to save CPU
-                if os.getenv('FLASK_ENV') == 'testing':
-                    time.sleep(0.1) 
+                if os.getenv("FLASK_ENV") == "testing":
+                    time.sleep(0.1)
                     continue
-                
+
                 # In simulation dev mode, update the timestamp
                 timestamp = time.strftime("%H:%M:%S")
                 with self.lock:
@@ -80,13 +83,13 @@ class Camera:
             success, image = self.video.read()
             if success:
                 # Encode to JPEG
-                ret, buffer = cv2.imencode('.jpg', image)
+                ret, buffer = cv2.imencode(".jpg", image)
                 if ret:
                     with self.lock:
                         self.jpeg_frame = buffer.tobytes()
             else:
                 print("⚠️ Camera frame read failed.")
-            
+
             # Maintain ~20 FPS
             time.sleep(0.05)
 
@@ -95,27 +98,29 @@ class Camera:
         # SAFETY CHECK: If cv2 is missing, return raw bytes (Magic JPEG Header)
         # This prevents the 'NameError: name 'cv2' is not defined' crash
         if cv2 is None:
-            return b'\xff\xd8\xff\xe0\x00\x10JFIF' 
+            return b"\xff\xd8\xff\xe0\x00\x10JFIF"
 
         # If cv2 exists, draw the text
         try:
             img = np.zeros((480, 640, 3), dtype=np.uint8)
             # Add text (Green color)
-            cv2.putText(img, text, (50, 240), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-            ret, jpeg = cv2.imencode('.jpg', img)
+            cv2.putText(
+                img, text, (50, 240), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2
+            )
+            ret, jpeg = cv2.imencode(".jpg", img)
             if ret:
                 return jpeg.tobytes()
         except Exception:
             pass
-            
+
         # Ultimate fallback if drawing fails
-        return b'\xff\xd8\xff\xe0\x00\x10JFIF'
+        return b"\xff\xd8\xff\xe0\x00\x10JFIF"
 
     def stop(self):
         self.is_running = False
         if self.thread and self.thread.is_alive():
             self.thread.join(timeout=1.0)
-        
+
         if self.video and self.video.isOpened():
             self.video.release()
 

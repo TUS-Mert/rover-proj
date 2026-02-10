@@ -11,12 +11,13 @@ from .models import User, CommandLog
 # database would be necessary to map session IDs to users across processes.
 connected_users = {}
 
-@socketio.on('connect')
+
+@socketio.on("connect")
 def handle_connect():
-    auth_header = request.headers.get('Authorization')
+    auth_header = request.headers.get("Authorization")
     token = None
-    if auth_header and auth_header.startswith('Bearer '):
-        token = auth_header.split(' ')[1]
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
 
     if not token:
         print("❌ Connection refused: No token provided in Authorization header.")
@@ -24,7 +25,7 @@ def handle_connect():
 
     try:
         decoded_token = decode_token(token)
-        user_email = decoded_token['sub']
+        user_email = decoded_token["sub"]
         user = User.query.filter_by(email=user_email).first()
 
         if not user:
@@ -37,14 +38,15 @@ def handle_connect():
 
         # Store user ID against their session ID for logging purposes
         connected_users[request.sid] = user.id
-        
+
         print(f"✅ Client connected. SID: {request.sid}, User ID: {user.id}")
-        emit('response', {'status': 'connected', 'message': 'Connection successful!'})
+        emit("response", {"status": "connected", "message": "Connection successful!"})
     except Exception as e:
         print(f"❌ Connection refused: Invalid Token. Reason: {e}")
-        return False # This disconnects the client
+        return False  # This disconnects the client
 
-@socketio.on('command')
+
+@socketio.on("command")
 def handle_command(json):
     user_id = connected_users.get(request.sid)
     if not user_id:
@@ -55,30 +57,31 @@ def handle_command(json):
     user = User.query.get(user_id)
     if not user or not user.can_write:
         print(f"❌ Command rejected: User {user_id} does not have write permission.")
-        emit('response', {'status': 'error', 'message': 'Insufficient permissions'})
+        emit("response", {"status": "error", "message": "Insufficient permissions"})
         return
 
-    action = json.get('action') 
-    value = json.get('value', 0)
-    
+    action = json.get("action")
+    value = json.get("value", 0)
+
     # Log the command to the database
     log_entry = CommandLog(
         command=action,
         user_id=user_id,
-        is_executed=True, # Assuming immediate execution
-        executed_at=db.func.now()
+        is_executed=True,  # Assuming immediate execution
+        executed_at=db.func.now(),
     )
     db.session.add(log_entry)
     db.session.commit()
-    
+
     print(f"User {user_id} executed command: {action}")
     # Trigger the hardware
     motion.execute(action, value)
-    
-    # Feedback to the UI
-    emit('response', {'status': 'ok', 'action': action})
 
-@socketio.on('disconnect')
+    # Feedback to the UI
+    emit("response", {"status": "ok", "action": action})
+
+
+@socketio.on("disconnect")
 def handle_disconnect():
     user_id = connected_users.pop(request.sid, None)
     if user_id:
