@@ -14,6 +14,7 @@ class Telemetry(db.Model):
     wifi_strength = db.Column(db.Integer)  # dBm
     humidity = db.Column(db.Float)  # Percentage 0.0 - 100.0
     temperature = db.Column(db.Float)  # Celsius
+    pressure = db.Column(db.Float)  # hPa
 
     # Optional: track which "session" this belongs to
     session_id = db.Column(db.String(50), nullable=True)
