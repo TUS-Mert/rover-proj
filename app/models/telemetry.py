@@ -1,5 +1,5 @@
 from .. import db
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 class Telemetry(db.Model):
@@ -7,7 +7,7 @@ class Telemetry(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     # Use index=True for the timestamp because you'll query by time often
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.now(timezone.utc))
 
     cpu_temp = db.Column(db.Float)
     battery_level = db.Column(db.Float)  # Percentage 0.0 - 1.0

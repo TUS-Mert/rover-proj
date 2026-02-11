@@ -1,4 +1,3 @@
-import threading
 from flask import (
     Blueprint,
     render_template,
@@ -20,26 +19,6 @@ from .sensors import sensor_manager
 
 main_bp = Blueprint("main", __name__)
 
-# Background thread for BME280
-thread = None
-thread_lock = threading.Lock()
-
-
-def background_sensor_thread():
-    """Sends sensor data to clients every 2 seconds."""
-    ticks = 0
-    while True:
-        socketio.sleep(2)
-        data = sensor_manager.get_readings()
-        if data:
-            socketio.emit("bme_data", data)
-
-            # Log data to DB every minute (30 * 2s = 60s)
-            ticks += 1
-            if ticks >= 30:
-                sensor_manager.log_data(data)
-                ticks = 0
-
 
 @main_bp.route("/")
 @login_required
@@ -47,12 +26,6 @@ def index():
     """Render the main dashboard page."""
     if not current_user.can_read:
         return render_template("auth/unauthorized.html"), 403
-
-    # Start the background thread if it's not running
-    global thread
-    with thread_lock:
-        if thread is None:
-            thread = socketio.start_background_task(background_sensor_thread)
 
     # Generate token for the logged-in user and pass it to the template
     access_token = create_access_token(identity=current_user.email)

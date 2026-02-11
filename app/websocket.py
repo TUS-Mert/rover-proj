@@ -1,3 +1,4 @@
+import threading
 from flask import request
 from flask_socketio import emit
 from flask_jwt_extended import decode_token
@@ -5,12 +6,31 @@ from flask_jwt_extended import decode_token
 # Import your socketio instance and hardware modules
 from . import socketio, motion, db
 from .models import User, CommandLog
+from .sensors import sensor_manager
 
 # A simple in-memory store for session data.
 # NOTE: In a multi-worker production setup, a shared store like Redis or a
 # database would be necessary to map session IDs to users across processes.
 connected_users = {}
 
+# Background thread for BME280
+thread = None
+thread_lock = threading.Lock()
+
+def background_sensor_thread():
+    """Sends sensor data to clients every 2 seconds."""
+    ticks = 0
+    while True:
+        socketio.sleep(2)
+        data = sensor_manager.get_readings()
+        if data:
+            socketio.emit("bme_data", data)
+
+            # Log data to DB every minute (30 * 2s = 60s)
+            ticks += 1
+            if ticks >= 30:
+                sensor_manager.log_data(data)
+                ticks = 0
 
 @socketio.on("connect")
 def handle_connect():
@@ -40,6 +60,13 @@ def handle_connect():
         connected_users[request.sid] = user.id
 
         print(f"✅ Client connected. SID: {request.sid}, User ID: {user.id}")
+        
+        # Start the background thread if it's not running
+        global thread
+        with thread_lock:
+            if thread is None:
+                thread = socketio.start_background_task(background_sensor_thread)
+
         emit("response", {"status": "connected", "message": "Connection successful!"})
     except Exception as e:
         print(f"❌ Connection refused: Invalid Token. Reason: {e}")
