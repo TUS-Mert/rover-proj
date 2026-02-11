@@ -1,5 +1,5 @@
 import threading
-from flask import request
+from flask import request, current_app
 from flask_socketio import emit
 from flask_jwt_extended import decode_token
 
@@ -17,7 +17,7 @@ connected_users = {}
 thread = None
 thread_lock = threading.Lock()
 
-def background_sensor_thread():
+def background_sensor_thread(app):
     """Sends sensor data to clients every 2 seconds."""
     ticks = 0
     while True:
@@ -29,7 +29,8 @@ def background_sensor_thread():
             # Log data to DB every minute (30 * 2s = 60s)
             ticks += 1
             if ticks >= 30:
-                sensor_manager.log_data(data)
+                with app.app_context():
+                    sensor_manager.log_data(data)
                 ticks = 0
 
 @socketio.on("connect")
@@ -65,7 +66,7 @@ def handle_connect():
         global thread
         with thread_lock:
             if thread is None:
-                thread = socketio.start_background_task(background_sensor_thread)
+                thread = socketio.start_background_task(background_sensor_thread, current_app._get_current_object())
 
         emit("response", {"status": "connected", "message": "Connection successful!"})
     except Exception as e:
