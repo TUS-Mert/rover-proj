@@ -65,7 +65,10 @@ class SensorManager:
 
         # Create a new Telemetry record
         entry = Telemetry(
-            temperature=readings.get("temperature"), humidity=readings.get("humidity"), pressure=readings.get("pressure")
+            temperature=readings.get("temperature"),
+            humidity=readings.get("humidity"),
+            pressure=readings.get("pressure"),
+            timestamp=db.func.now()
         )
 
         try:
