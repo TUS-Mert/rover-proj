@@ -77,6 +77,8 @@ class SensorManager:
 
     def _generate_mock_data(self):
         """Generates random data for testing."""
+        print("Simulating sensor data...")
+
         return {
             "temperature": round(25.0 + random.uniform(-0.5, 0.5), 2),
             "humidity": round(45.0 + random.uniform(-2, 2), 2),
