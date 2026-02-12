@@ -27,6 +27,7 @@ class Sensor(ABC):
     def get_readings(self) -> dict:
         pass
     
+    
 
 @dataclass
 class BME280Sensor(Sensor):
@@ -76,11 +77,7 @@ class BME280Sensor(Sensor):
     def _generate_mock_data(self):
         """Generates random data for testing."""
 
-        return {
-            "temperature": round(25.0 + random.uniform(-0.5, 0.5), 2),
-            "humidity": round(45.0 + random.uniform(-2, 2), 2),
-            "pressure": round(1013.0 + random.uniform(-1, 1), 2),
-        }
+        return {}
 
 
 @dataclass
