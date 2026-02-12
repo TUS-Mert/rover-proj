@@ -6,7 +6,7 @@ from flask_jwt_extended import decode_token
 # Import your socketio instance and hardware modules
 from . import socketio, motion, db
 from .models import User, CommandLog
-from .sensors import sensor_manager
+from .sensors import sensor_manager1, sensor_manager2
 
 # A simple in-memory store for session data.
 # NOTE: In a multi-worker production setup, a shared store like Redis or a
@@ -22,7 +22,16 @@ def background_sensor_thread(app):
     ticks = 0
     while True:
         socketio.sleep(2)
-        data = sensor_manager.get_readings()
+        data1 = sensor_manager1.get_readings()
+        data2 = sensor_manager2.get_readings()
+
+        data = {}
+        for key in data1.keys():
+            d_piece1 = data1[key]
+            d_piece2 = data2[key]
+            d_avg = (d_piece1 + d_piece2)/2
+            data[key] = d_avg
+
         if data:
             socketio.emit("bme_data", data)
 

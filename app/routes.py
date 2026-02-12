@@ -15,7 +15,6 @@ from flask_login import login_required, current_user
 from app import db, socketio
 from app.models import User, UserPrivilege
 from . import streaming
-from .sensors import sensor_manager
 
 main_bp = Blueprint("main", __name__)
 
@@ -42,17 +41,6 @@ def video_feed():
         streaming.generate_frames(),
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
-
-
-@main_bp.route("/api/sensors")
-@login_required
-def get_sensor_data():
-    """API endpoint to fetch current sensor data."""
-    data = sensor_manager.get_readings()
-    if data:
-        return jsonify(data)
-    return jsonify({"error": "Sensor read failed"}), 500
-
 
 # The /token route is no longer needed as it's generated on dashboard load
 @main_bp.route("/logs")

@@ -1,5 +1,6 @@
 import os
 import random
+from dataclasses import dataclass
 
 from .models import Telemetry
 from . import db
@@ -13,11 +14,13 @@ except ImportError:
     HARDWARE_AVAILABLE = False
 
 
-class SensorManager:
-    def __init__(self):
-        self.address = 0x76
-        self.bus = None
-        self.calibration_params = None
+@dataclass
+class SensorManager():
+    address:hex = 0x76
+    bus = None
+    calibration_params = None
+
+    def __post_init__(self):
         self.simulate = (
             (not HARDWARE_AVAILABLE)
             or (os.getenv("SIMULATE_HARDWARE") == "true")
@@ -89,4 +92,6 @@ class SensorManager:
 
 
 # Create a global instance to be imported by routes
-sensor_manager = SensorManager()
+sensor_manager1 = SensorManager()
+# sensor_manager2 = sensor_manager1
+sensor_manager2 = SensorManager(address=0x77)
