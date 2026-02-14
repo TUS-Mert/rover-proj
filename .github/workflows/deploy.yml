@@ -84,4 +84,4 @@ jobs:
 
       - name: Get sitename
         run: |
-          docker logs rover-tunnel
+          docker logs rover_tunnel
