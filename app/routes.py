@@ -13,7 +13,7 @@ from flask_jwt_extended import create_access_token
 from flask_login import login_required, current_user
 
 from app import db, socketio
-from app.models import User, UserPrivilege
+from app.models import CommandLog, User, UserPrivilege
 from . import streaming
 
 main_bp = Blueprint("main", __name__)
@@ -46,8 +46,12 @@ def video_feed():
 @main_bp.route("/logs")
 @login_required
 def logs():
-    """Placeholder for a future logs page."""
-    return "Logs page coming soon.", 200
+    """Displays the last 20 system logs."""
+    if not current_user.can_read:
+        return render_template("auth/unauthorized.html"), 403
+
+    logs = CommandLog.query.order_by(CommandLog.created_at.desc()).limit(20).all()
+    return render_template("logs/logs.html", logs=logs)
 
 
 @main_bp.route("/grant_privilege")
