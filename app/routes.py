@@ -43,7 +43,7 @@ def video_feed():
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
-@main_bp.route("bme_data")
+@main_bp.route("/bme_data")
 @login_required
 def bme_data():
     if not current_user.can_read:
