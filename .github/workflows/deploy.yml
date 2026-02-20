@@ -77,11 +77,6 @@ jobs:
             echo "✅ Docker is already installed."
           fi
 
-      - name: Give Docker permissions
-        run: |
-          sudo usermod -aG docker $USER
-          newgrp docker
-
       - name: Deploy to Docker Compose
         run: |
           docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
