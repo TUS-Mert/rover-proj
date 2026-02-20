@@ -14,6 +14,7 @@ from flask_login import login_required, current_user
 
 from app import db, socketio
 from app.models import CommandLog, User, UserPrivilege
+from app.sensors import sensor_manager
 from . import streaming
 
 main_bp = Blueprint("main", __name__)
@@ -42,6 +43,13 @@ def video_feed():
         mimetype="multipart/x-mixed-replace; boundary=frame",
     )
 
+@main_bp.route("bme_data")
+@login_required
+def bme_data():
+    if not current_user.can_read:
+        abort(403)
+    return jsonify(sensor_manager.get_average_readings())
+
 # The /token route is no longer needed as it's generated on dashboard load
 @main_bp.route("/logs")
 @login_required
@@ -68,6 +76,7 @@ def grant_privilege():
     return render_template(
         "auth/privilege_granting.html", users=users, UserPrivilege=UserPrivilege
     )
+
 
 
 @main_bp.route("/update_user_role/<int:user_id>", methods=["POST"])
