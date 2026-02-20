@@ -1,13 +1,21 @@
+from ast import Name
 import sys
+import os
 from argparse import ArgumentParser
+import bcrypt
+import dotenv
 
+from flask_bcrypt import Bcrypt
+
+from app.models import User
 from app import create_app, db
 
 
+dotenv.load_dotenv()
 def initialize_database(drop_all: bool = False):
     """Drops existing tables and creates new ones based on the models."""
     app = create_app()
-
+    bcrypt = Bcrypt()
     with app.app_context():
         try:
             print("--- Database Initialization Started ---")
@@ -23,6 +31,10 @@ def initialize_database(drop_all: bool = False):
 
             print("✅ Database successfully initialized!")
             print(f"Tables created: {db.metadata.tables.keys()}")
+
+            user = User(email="admin@admin.com", password=bcrypt.generate_password_hash(os.getenv("POSTGRES_PASSWORD")))
+            db.session.add(user)
+            db.session.commit()
 
         except Exception as e:
             print(f"❌ Error during initialization: {e}", file=sys.stderr)
