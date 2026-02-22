@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 import os
-import random
 from dataclasses import dataclass, field
 from collections import defaultdict
-from webbrowser import get
 
 from .models import Telemetry
 from . import db
